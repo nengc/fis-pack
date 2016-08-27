@@ -70,4 +70,7 @@ var map = getMap();
 //save the app map to the release dir
 fs.writeFileSync('../'+fis.get('projectName')+'/' + map.release, JSON.stringify(realRet.map));
 
+```
+### The result
+![github](https://github.com/nengc/resources/blob/master/fis-pack-01.png "github") 
 
