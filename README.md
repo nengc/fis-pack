@@ -73,6 +73,10 @@ fs.writeFileSync('../'+fis.get('projectName')+'/' + map.release, JSON.stringify(
 ```
 ### The result
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-01.png "github") 
+```
+- Pack before
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-02.png "github") 
+```
+- Pack after
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-03.png "github") 
 
