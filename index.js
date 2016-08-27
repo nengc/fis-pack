@@ -256,12 +256,12 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
         if (has.length) {
             var fs = require('fs');
-            var dir = ('../yog' + pkg.release).split(pkg.basename)[0];
+            var dir = ('../' + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
             var folder_exists = fs.existsSync(dir);
             if (!folder_exists) {
                 fs.mkdir(dir);
             }
-            fs.writeFileSync('../' + opt.projectName + pkg.release, content);
+            fs.writeFileSync('../' + fis.get('projectName') + pkg.release, content);
         }
 
         //判断是否是入口文件
