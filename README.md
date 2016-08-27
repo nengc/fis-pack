@@ -71,15 +71,10 @@ var map = getMap();
 fs.writeFileSync('../'+fis.get('projectName')+'/' + map.release, JSON.stringify(realRet.map));
 
 ```
-### The result
-```
+## The result
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-01.png "github") 
-```
-- Pack before
-```
+### Pack before
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-02.png "github") 
-```
-- Pack after
-```
+### Pack after
 ![github](https://github.com/nengc/resources/blob/master/fis-pack-03.png "github") 
 
