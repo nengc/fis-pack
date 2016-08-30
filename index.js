@@ -231,19 +231,43 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                     ret.map.res[id].subpath = pkg.url;
                 }
 
-                for (var x in ret.map.res[id].deps) {
-                    var p = ret.map.res[id].deps[x];
-                    if (file._likes.isJsLike) {
-                        if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                            ret.map.res[id].deps.splice(x, 1);
+
+                // for (var x in ret.map.res[id].deps) {
+                //
+                //     var p = ret.map.res[id].deps[x];
+                //     if(id.indexOf('topic')!==-1){
+                //         console.log(p);
+                //     }
+                //     if (file._likes.isJsLike) {
+                //         if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                //             // ret.map.res[id].deps.splice(x, 1);
+                //         }
+                //     }
+                //     if (file._likes.isCssLike) {
+                //         if (p.indexOf('css') !== -1) {
+                //             // ret.map.res[id].deps.splice(x, 1);
+                //         }
+                //     }
+                // }
+
+                var deps = ret.map.res[id].deps;
+                if(deps!==undefined){
+                    // console.log(deps.length);
+                    for (var x = deps.length - 1; x >= 0; x--) {
+                        var p = deps[x];
+                        if (file._likes.isJsLike) {
+                            if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                                deps.splice(x+1, 1);
+                            }
                         }
-                    }
-                    if (file._likes.isCssLike) {
-                        if (p.indexOf('css') !== -1) {
-                            ret.map.res[id].deps.splice(x, 1);
+                        if (file._likes.isCssLike) {
+                            if (p.indexOf('css') !== -1) {
+                                deps.splice(x+1, 1);
+                            }
                         }
                     }
                 }
+
                 if (!packCss) {
                     if (ret.map.res[id].deps) {
                         ret.map.res[id].deps = ret.map.res[id].deps.concat(subDeps);
@@ -262,7 +286,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             if (!folder_exists) {
                 _.mkdir(dir);
             }
-            console.log('../' + fis.get('projectName') + pkg.release);
+            // console.log('../' + fis.get('projectName') + pkg.release);
             fs.writeFileSync('../' + fis.get('projectName') + pkg.release, content);
         }
 
