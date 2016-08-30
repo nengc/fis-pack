@@ -4,8 +4,9 @@
 var path = require('path');
 var _ = fis.util;
 
-module.exports = function (ret, pack, settings, opt, packCss) {
-//console.log(opt);
+var fisPack = module.exports = {};
+module.exports = function(ret, pack, settings, opt, packCss) {
+    //console.log(opt);
     var path = require('path');
 
     // var root = fis.project.getProjectPath();
@@ -35,14 +36,14 @@ module.exports = function (ret, pack, settings, opt, packCss) {
     var requireMap = {};
 
     // 生成数组
-    Object.keys(src).forEach(function (key) {
+    Object.keys(src).forEach(function(key) {
         sources.push(src[key]);
     });
 
-    var getDeps = (function (src, ids) {
-        return function (file, async) {
+    var getDeps = (function(src, ids) {
+        return function(file, async) {
             var list = [];
-            var pending = [{file: file, async: async}];
+            var pending = [{ file: file, async: async }];
             var collected = [];
             var asyncCollected = [];
 
@@ -54,10 +55,10 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
                 if (cf.requires && cf.requires.length && !~collected.indexOf(cf)) {
                     collected.push(cf);
-                    cf.requires.forEach(function (id) {
+                    cf.requires.forEach(function(id) {
                         //console.log(id);
 
-                        if (!ids[id])return;
+                        if (!ids[id]) return;
                         ca || ~list.indexOf(ids[id]) || list.push(ids[id]);
 
                         pending.push({
@@ -69,8 +70,8 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
                 if ((ca || includeAsync) && file.asyncs && file.asyncs.length && !~asyncCollected.indexOf(cf)) {
                     asyncCollected.push(cf);
-                    cf.asyncs.forEach(function (id) {
-                        if (!ids[id])return;
+                    cf.asyncs.forEach(function(id) {
+                        if (!ids[id]) return;
 
                         ~list.indexOf(ids[id]) || list.push(ids[id]);
 
@@ -103,7 +104,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
             reg = _.glob(reg);
         }
 
-        result = sources.filter(function (file) {
+        result = sources.filter(function(file) {
             reg.lastIndex = 0;
             return (reg === '**' || reg.test(file.subpath)) && (!rExt || file.rExt === rExt);
         });
@@ -113,7 +114,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
             result = [];
 
             if (pseudo === 'deps' || pseudo === 'asyncs') {
-                base.forEach(function (file) {
+                base.forEach(function(file) {
                     result.push.apply(result, getDeps(file, pseudo === 'asyncs'));
                 });
             } else {
@@ -123,7 +124,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
         return result;
     }
 
-    Object.keys(pack).forEach(function (subpath, index) {
+    Object.keys(pack).forEach(function(subpath, index) {
         var patterns = pack[subpath];
 
         if (!Array.isArray(patterns)) {
@@ -138,7 +139,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
         var list = [];
 
-        patterns.forEach(function (pattern, index) {
+        patterns.forEach(function(pattern, index) {
             var exclude = typeof pattern === 'string' && pattern.substring(0, 1) === '!';
 
             if (exclude) {
@@ -158,7 +159,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
         function add(file) {
             if (file.requires) {
-                file.requires.forEach(function (id) {
+                file.requires.forEach(function(id) {
                     var dep = ret.ids[id];
                     var idx;
                     if (dep && dep.rExt === pkg.rExt && ~(idx = list.indexOf(dep))) {
@@ -179,7 +180,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
         var subDeps = [];
 
-        filtered.forEach(function (file) {
+        filtered.forEach(function(file) {
 
             // var id = file.getId();
             var id = file.id;
@@ -214,7 +215,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
             }
         });
 
-        filtered.forEach(function (file) {
+        filtered.forEach(function(file) {
             var id = file.id;
 
             if (isEntry(id)) {
@@ -269,7 +270,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
             var flag = false;
             var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
             //console.log(1+name);
-            Object.keys(pack).forEach(function (path) {
+            Object.keys(pack).forEach(function(path) {
                 if (path.indexOf(name) !== -1) {
                     flag = true;
                     //console.log(2+name);
