@@ -9,14 +9,14 @@ yog2/fis plugin for pack page and compatible well
 ## Install
 
 ```
-npm install fis-pack
+npm install fis-pack -g
 ```
 
 ## How to Use
 
 ### Import the module
 ```js
-var fisPack = require('fis-pack');
+var fisPack = fis.require('pack');
 ```
 ### Set project name as a param
 ```js
