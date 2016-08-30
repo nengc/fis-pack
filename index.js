@@ -2,12 +2,13 @@
  * Created by Administrator on 2016/8/15.
  */
 var path = require('path');
+var fs = require('fs');
+
 var _ = fis.util;
 
 var fisPack = module.exports = {};
 module.exports = function(ret, pack, settings, opt, packCss) {
     //console.log(opt);
-    var path = require('path');
 
     // var root = fis.project.getProjectPath();
     // var ns = fis.get('namespace');
@@ -256,12 +257,12 @@ module.exports = function(ret, pack, settings, opt, packCss) {
         });
 
         if (has.length) {
-            var fs = require('fs');
             var dir = ('../' + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
-            var folder_exists = fs.existsSync(dir);
+            var folder_exists = fs.exists(dir);
             if (!folder_exists) {
-                fs.mkdir(dir);
+                _.mkdir(dir);
             }
+            console.log('../' + fis.get('projectName') + pkg.release);
             fs.writeFileSync('../' + fis.get('projectName') + pkg.release, content);
         }
 
@@ -278,6 +279,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             });
             return flag;
         }
+
     });
 
     return ret;
