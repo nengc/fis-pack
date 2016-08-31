@@ -2,13 +2,12 @@
  * Created by Administrator on 2016/8/15.
  */
 var path = require('path');
-var fs = require('fs');
-
 var _ = fis.util;
 
 var fisPack = module.exports = {};
 module.exports = function(ret, pack, settings, opt, packCss) {
     //console.log(opt);
+    var path = require('path');
 
     // var root = fis.project.getProjectPath();
     // var ns = fis.get('namespace');
@@ -231,21 +230,16 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                     ret.map.res[id].subpath = pkg.url;
                 }
 
-
                 // for (var x in ret.map.res[id].deps) {
-                //
                 //     var p = ret.map.res[id].deps[x];
-                //     if(id.indexOf('topic')!==-1){
-                //         console.log(p);
-                //     }
                 //     if (file._likes.isJsLike) {
                 //         if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                //             // ret.map.res[id].deps.splice(x, 1);
+                //             ret.map.res[id].deps.splice(x, 1);
                 //         }
                 //     }
                 //     if (file._likes.isCssLike) {
                 //         if (p.indexOf('css') !== -1) {
-                //             // ret.map.res[id].deps.splice(x, 1);
+                //             ret.map.res[id].deps.splice(x, 1);
                 //         }
                 //     }
                 // }
@@ -267,6 +261,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                         }
                     }
                 }
+
                 // var deps = ret.map.res[id].deps;
                 // var p;
                 // if (deps !== undefined) {
@@ -284,7 +279,6 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                 //         }
                 //     }
                 // }
-            }
 
                 if (!packCss) {
                     if (ret.map.res[id].deps) {
@@ -299,12 +293,12 @@ module.exports = function(ret, pack, settings, opt, packCss) {
         });
 
         if (has.length) {
+            var fs = require('fs');
             var dir = ('../' + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
-            var folder_exists = fs.exists(dir);
+            var folder_exists = fs.existsSync(dir);
             if (!folder_exists) {
-                _.mkdir(dir);
+                fs.mkdir(dir);
             }
-            // console.log('../' + fis.get('projectName') + pkg.release);
             fs.writeFileSync('../' + fis.get('projectName') + pkg.release, content);
         }
 
@@ -321,7 +315,6 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             });
             return flag;
         }
-
     });
 
     return ret;

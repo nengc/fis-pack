@@ -1,6 +1,6 @@
 {
   "name": "fis-pack",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "yog2/fis plugin for pack page",
   "main": "index.js",
   "scripts": {
