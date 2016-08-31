@@ -251,22 +251,40 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                 // }
 
                 var deps = ret.map.res[id].deps;
-                if(deps!==undefined){
+                if (deps !== undefined) {
                     // console.log(deps.length);
                     for (var x = deps.length - 1; x >= 0; x--) {
                         var p = deps[x];
                         if (file._likes.isJsLike) {
                             if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                                deps.splice(x+1, 1);
+                                deps.splice(x, 1);
                             }
                         }
                         if (file._likes.isCssLike) {
                             if (p.indexOf('css') !== -1) {
-                                deps.splice(x+1, 1);
+                                deps.splice(x, 1);
                             }
                         }
                     }
                 }
+                // var deps = ret.map.res[id].deps;
+                // var p;
+                // if (deps !== undefined) {
+                //     var x = deps.length - 1;
+                //     while ((p = deps[x--])) {
+                //         if (file._likes.isJsLike) {
+                //             if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                //                 deps.splice(x + 1, 1);
+                //             }
+                //         }
+                //         if (file._likes.isCssLike) {
+                //             if (p.indexOf('css') !== -1) {
+                //                 deps.splice(x + 1, 1);
+                //             }
+                //         }
+                //     }
+                // }
+            }
 
                 if (!packCss) {
                     if (ret.map.res[id].deps) {
