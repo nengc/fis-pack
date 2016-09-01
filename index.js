@@ -213,6 +213,22 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 requires = requires.concat(file.requires);
                 has.push(id);
             }
+
+        });
+
+        filtered.forEach(function (file) {
+            var id = file.id;
+            if (isEntry(id)) {
+                if (!packCss) {
+                    if (ret.map.res[id].deps) {
+                        ret.map.res[id].deps = ret.map.res[id].deps.concat(subDeps);
+                    }
+                }
+            } else {
+                if (!packCss) {
+                    subDeps = subDeps.concat(file.map.deps);
+                }
+            }
         });
 
         filtered.forEach(function (file) {
@@ -231,6 +247,26 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 }
                 pkg.hash = md5;
 
+                var deps = ret.map.res[id].deps;
+                if (deps !== undefined) {
+                    if (packCss) {
+                        // deps.splice(0,deps.length);
+                        deps.length=0;
+                    } else {
+                        for (var x = deps.length - 1; x >= 0; x--) {
+                            var p = deps[x];
+                            if (p) {
+                                if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                                    deps.splice(x, 1);
+                                }
+                            }
+                            if (p === null || p === 'null' || p === undefined || p === '') {
+                                deps.splice(x, 1);
+                            }
+                        }
+                    }
+                }
+
                 // for (var x in ret.map.res[id].deps) {
                 //     var p = ret.map.res[id].deps[x];
                 //     if (file._likes.isJsLike) {
@@ -245,23 +281,23 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 //     }
                 // }
 
-                var deps = ret.map.res[id].deps;
-                if (deps !== undefined) {
-                    // console.log(deps.length);
-                    for (var x = deps.length - 1; x >= 0; x--) {
-                        var p = deps[x];
-                        if (file._likes.isJsLike) {
-                            if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                                deps.splice(x, 1);
-                            }
-                        }
-                        if (file._likes.isCssLike) {
-                            if (p.indexOf('css') !== -1) {
-                                deps.splice(x, 1);
-                            }
-                        }
-                    }
-                }
+                // var deps = ret.map.res[id].deps;
+                // if (deps !== undefined) {
+                //     for (var x = deps.length - 1; x >= 0; x--) {
+                //         var p = deps[x];
+                //         console.log(p);
+                //         if (file._likes.isJsLike) {
+                //             if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                //                 deps.splice(x, 1);
+                //             }
+                //         }
+                //         if (file._likes.isCssLike) {
+                //             if (p.indexOf('css') !== -1) {
+                //                 deps.splice(x, 1);
+                //             }
+                //         }
+                //     }
+                // }
 
                 // var deps = ret.map.res[id].deps;
                 // var p;
@@ -281,15 +317,6 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 //     }
                 // }
 
-                if (!packCss) {
-                    if (ret.map.res[id].deps) {
-                        ret.map.res[id].deps = ret.map.res[id].deps.concat(subDeps);
-                    }
-                }
-            } else {
-                if (!packCss) {
-                    subDeps = subDeps.concat(file.map.deps);
-                }
             }
         });
 
@@ -318,16 +345,26 @@ module.exports = function (ret, pack, settings, opt, packCss) {
         function isEntry(path) {
             var flag = false;
             var name = path.substr(path.lastIndexOf('/') + 1);
-            //console.log(1+name);
             Object.keys(pack).forEach(function (p) {
                 if (p.indexOf(name) !== -1 && path.indexOf(fis.get('namespace'))!==-1) {
                     flag = true;
                     // console.log(1+p);
                     // console.log(2+path);
+                    // console.log(3+name);
                 }
             });
             return flag;
         }
+        // function isEntry(path) {
+        //     var flag = false;
+        //     var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
+        //     Object.keys(pack).forEach(function (path) {
+        //         if (path.indexOf(name) !== -1) {
+        //             flag = true;
+        //         }
+        //     });
+        //     return flag;
+        // }
     });
 
     return ret;
