@@ -5,7 +5,7 @@ var path = require('path');
 var _ = fis.util;
 
 var fisPack = module.exports = {};
-module.exports = function(ret, pack, settings, opt, packCss) {
+module.exports = function (ret, pack, settings, opt, packCss) {
     //console.log(opt);
     var path = require('path');
 
@@ -36,14 +36,14 @@ module.exports = function(ret, pack, settings, opt, packCss) {
     var requireMap = {};
 
     // 生成数组
-    Object.keys(src).forEach(function(key) {
+    Object.keys(src).forEach(function (key) {
         sources.push(src[key]);
     });
 
-    var getDeps = (function(src, ids) {
-        return function(file, async) {
+    var getDeps = (function (src, ids) {
+        return function (file, async) {
             var list = [];
-            var pending = [{ file: file, async: async }];
+            var pending = [{file: file, async: async}];
             var collected = [];
             var asyncCollected = [];
 
@@ -55,7 +55,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
 
                 if (cf.requires && cf.requires.length && !~collected.indexOf(cf)) {
                     collected.push(cf);
-                    cf.requires.forEach(function(id) {
+                    cf.requires.forEach(function (id) {
                         //console.log(id);
 
                         if (!ids[id]) return;
@@ -70,7 +70,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
 
                 if ((ca || includeAsync) && file.asyncs && file.asyncs.length && !~asyncCollected.indexOf(cf)) {
                     asyncCollected.push(cf);
-                    cf.asyncs.forEach(function(id) {
+                    cf.asyncs.forEach(function (id) {
                         if (!ids[id]) return;
 
                         ~list.indexOf(ids[id]) || list.push(ids[id]);
@@ -104,7 +104,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             reg = _.glob(reg);
         }
 
-        result = sources.filter(function(file) {
+        result = sources.filter(function (file) {
             reg.lastIndex = 0;
             return (reg === '**' || reg.test(file.subpath)) && (!rExt || file.rExt === rExt);
         });
@@ -114,7 +114,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             result = [];
 
             if (pseudo === 'deps' || pseudo === 'asyncs') {
-                base.forEach(function(file) {
+                base.forEach(function (file) {
                     result.push.apply(result, getDeps(file, pseudo === 'asyncs'));
                 });
             } else {
@@ -124,7 +124,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
         return result;
     }
 
-    Object.keys(pack).forEach(function(subpath, index) {
+    Object.keys(pack).forEach(function (subpath, index) {
         var patterns = pack[subpath];
 
         if (!Array.isArray(patterns)) {
@@ -139,7 +139,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
 
         var list = [];
 
-        patterns.forEach(function(pattern, index) {
+        patterns.forEach(function (pattern, index) {
             var exclude = typeof pattern === 'string' && pattern.substring(0, 1) === '!';
 
             if (exclude) {
@@ -159,7 +159,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
 
         function add(file) {
             if (file.requires) {
-                file.requires.forEach(function(id) {
+                file.requires.forEach(function (id) {
                     var dep = ret.ids[id];
                     var idx;
                     if (dep && dep.rExt === pkg.rExt && ~(idx = list.indexOf(dep))) {
@@ -180,7 +180,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
 
         var subDeps = [];
 
-        filtered.forEach(function(file) {
+        filtered.forEach(function (file) {
 
             // var id = file.getId();
             var id = file.id;
@@ -215,11 +215,11 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             }
         });
 
-        filtered.forEach(function(file) {
+        filtered.forEach(function (file) {
             var id = file.id;
 
             if (isEntry(id)) {
-                if (opt.hash) {
+                if (file.useHash) {
                     var ext = pkg.url.split('.')[1];
                     var md5 = fis.util.md5(file._content);
                     var realPath = pkg.url.replace('.' + ext, '_' + md5 + '.' + ext);
@@ -229,6 +229,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
                     ret.map.res[id].uri = pkg.url;
                     ret.map.res[id].subpath = pkg.url;
                 }
+                pkg.hash = md5;
 
                 // for (var x in ret.map.res[id].deps) {
                 //     var p = ret.map.res[id].deps[x];
@@ -293,13 +294,22 @@ module.exports = function(ret, pack, settings, opt, packCss) {
         });
 
         if (has.length) {
+
             var fs = require('fs');
             var dir = ('../' + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
             var folder_exists = fs.existsSync(dir);
             if (!folder_exists) {
                 fs.mkdir(dir);
             }
-            fs.writeFileSync('../' + fis.get('projectName') + pkg.release, content);
+
+            var realReleasePath;
+            if (pkg.useHash) {
+                var ext = pkg.release.split('.')[1];
+                realReleasePath = pkg.release.replace('.' + ext, '_' + pkg.hash + '.' + ext);
+            } else {
+                realReleasePath = pkg.release;
+            }
+            fs.writeFileSync('../' + fis.get('projectName') + realReleasePath, content);
         }
 
         //判断是否是入口文件
@@ -307,7 +317,7 @@ module.exports = function(ret, pack, settings, opt, packCss) {
             var flag = false;
             var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
             //console.log(1+name);
-            Object.keys(pack).forEach(function(path) {
+            Object.keys(pack).forEach(function (path) {
                 if (path.indexOf(name) !== -1) {
                     flag = true;
                     //console.log(2+name);
