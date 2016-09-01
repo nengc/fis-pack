@@ -317,12 +317,13 @@ module.exports = function (ret, pack, settings, opt, packCss) {
         //判断是否是入口文件
         function isEntry(path) {
             var flag = false;
-            var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
+            var name = path.substr(path.lastIndexOf('/') + 1);
             //console.log(1+name);
-            Object.keys(pack).forEach(function (path) {
-                if (path.indexOf(name) !== -1) {
+            Object.keys(pack).forEach(function (p) {
+                if (p.indexOf(name) !== -1 && path.indexOf(fis.get('namespace'))!==-1) {
                     flag = true;
-                    //console.log(2+name);
+                    // console.log(1+p);
+                    // console.log(2+path);
                 }
             });
             return flag;
