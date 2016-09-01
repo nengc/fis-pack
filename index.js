@@ -296,10 +296,12 @@ module.exports = function (ret, pack, settings, opt, packCss) {
         if (has.length) {
 
             var fs = require('fs');
-            var dir = ('../' + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
+            var rootPath = fis.project.getProjectPath().replace(fis.get('namespace'), '');
+            var dir = (rootPath + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
+
             var folder_exists = fs.existsSync(dir);
             if (!folder_exists) {
-                fs.mkdir(dir);
+                _.mkdir(dir);
             }
 
             var realReleasePath;
