@@ -214,20 +214,8 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 has.push(id);
             }
 
-        });
-
-        filtered.forEach(function (file) {
-            var id = file.id;
-            if (isEntry(id)) {
-                if (!packCss) {
-                    if (ret.map.res[id].deps) {
-                        ret.map.res[id].deps = ret.map.res[id].deps.concat(subDeps);
-                    }
-                }
-            } else {
-                if (!packCss) {
-                    subDeps = subDeps.concat(file.map.deps);
-                }
+            if (file.map.deps) {
+                subDeps = subDeps.concat(file.map.deps);
             }
         });
 
@@ -247,76 +235,34 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 }
                 pkg.hash = md5;
 
-                var deps = ret.map.res[id].deps;
+                var deps = ret.map.res[id].deps = subDeps;
                 if (deps !== undefined) {
                     if (packCss) {
-                        // deps.splice(0,deps.length);
-                        deps.length=0;
+                        //deps.splice(0,deps.length);
+                        deps.length = 0;
                     } else {
                         for (var x = deps.length - 1; x >= 0; x--) {
                             var p = deps[x];
                             if (p) {
-                                if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                                    deps.splice(x, 1);
+                                if (file._likes.isJsLike) {
+                                    if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
+                                        deps.splice(x, 1);
+                                    }
                                 }
-                            }
-                            if (p === null || p === 'null' || p === undefined || p === '') {
+                                if (file._likes.isCssLike) {
+                                    if (p.indexOf('css') !== -1) {
+                                        deps.splice(x, 1);
+                                    }
+                                }
+                            } else {
                                 deps.splice(x, 1);
                             }
                         }
                     }
+                    if (deps.length === 0) {
+                        delete ret.map.res[id].deps;
+                    }
                 }
-
-                // for (var x in ret.map.res[id].deps) {
-                //     var p = ret.map.res[id].deps[x];
-                //     if (file._likes.isJsLike) {
-                //         if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                //             ret.map.res[id].deps.splice(x, 1);
-                //         }
-                //     }
-                //     if (file._likes.isCssLike) {
-                //         if (p.indexOf('css') !== -1) {
-                //             ret.map.res[id].deps.splice(x, 1);
-                //         }
-                //     }
-                // }
-
-                // var deps = ret.map.res[id].deps;
-                // if (deps !== undefined) {
-                //     for (var x = deps.length - 1; x >= 0; x--) {
-                //         var p = deps[x];
-                //         console.log(p);
-                //         if (file._likes.isJsLike) {
-                //             if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                //                 deps.splice(x, 1);
-                //             }
-                //         }
-                //         if (file._likes.isCssLike) {
-                //             if (p.indexOf('css') !== -1) {
-                //                 deps.splice(x, 1);
-                //             }
-                //         }
-                //     }
-                // }
-
-                // var deps = ret.map.res[id].deps;
-                // var p;
-                // if (deps !== undefined) {
-                //     var x = deps.length - 1;
-                //     while ((p = deps[x--])) {
-                //         if (file._likes.isJsLike) {
-                //             if (p.indexOf('jsx') !== -1 || p.indexOf('js') !== -1) {
-                //                 deps.splice(x + 1, 1);
-                //             }
-                //         }
-                //         if (file._likes.isCssLike) {
-                //             if (p.indexOf('css') !== -1) {
-                //                 deps.splice(x + 1, 1);
-                //             }
-                //         }
-                //     }
-                // }
-
             }
         });
 
@@ -344,28 +290,14 @@ module.exports = function (ret, pack, settings, opt, packCss) {
         //判断是否是入口文件
         function isEntry(path) {
             var flag = false;
-            var name = path.substr(path.lastIndexOf('/') + 1);
+            var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
             Object.keys(pack).forEach(function (p) {
-                if (p.indexOf(name) !== -1 && path.indexOf(fis.get('namespace'))!==-1) {
+                if (p.indexOf(name + '.') !== -1 && path.indexOf(fis.get('namespace')) !== -1) {
                     flag = true;
-                    // console.log(1+p);
-                    // console.log(2+path);
-                    // console.log(3+name);
                 }
             });
             return flag;
         }
-        // function isEntry(path) {
-        //     var flag = false;
-        //     var name = path.substr(path.lastIndexOf('/') + 1).split('.')[0];
-        //     Object.keys(pack).forEach(function (path) {
-        //         if (path.indexOf(name) !== -1) {
-        //             flag = true;
-        //         }
-        //     });
-        //     return flag;
-        // }
     });
-
     return ret;
 };
