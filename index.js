@@ -8,7 +8,7 @@ var fisPack = module.exports = {};
 module.exports = function (ret, pack, settings, opt, packCss) {
 
     var dest = opt.dest === 'preview' ? '../yog' : opt.dest;
-    
+
     //console.log(opt);
     var path = require('path');
 
@@ -273,12 +273,12 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 
             var fs = require('fs');
             var rootPath = fis.project.getProjectPath().replace(fis.get('namespace'), '');
-            var dir = (rootPath + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
+            // var dir = (rootPath + fis.get('projectName') + pkg.release).split(pkg.basename)[0];
 
-            var folder_exists = fs.existsSync(dir);
-            if (!folder_exists) {
-                _.mkdir(dir);
-            }
+            // var folder_exists = fs.existsSync(dir);
+            // if (!folder_exists) {
+            //     _.mkdir(dir);
+            // }
 
             var realReleasePath;
             if (pkg.hash) {
@@ -286,6 +286,10 @@ module.exports = function (ret, pack, settings, opt, packCss) {
                 realReleasePath = pkg.release.replace('.' + ext, '_' + pkg.hash + '.' + ext);
             } else {
                 realReleasePath = pkg.release;
+            }
+            var dir = path.dirname(dest + realReleasePath);
+            if (!fs.existsSync(dir)) {
+                _.mkdir(dir);
             }
             fs.writeFileSync(dest + realReleasePath, content);
         }
