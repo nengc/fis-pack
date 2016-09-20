@@ -6,6 +6,9 @@ var _ = fis.util;
 
 var fisPack = module.exports = {};
 module.exports = function (ret, pack, settings, opt, packCss) {
+
+    var dest = opt.dest === 'preview' ? '../yog' : opt.dest;
+    
     //console.log(opt);
     var path = require('path');
 
@@ -278,13 +281,13 @@ module.exports = function (ret, pack, settings, opt, packCss) {
             }
 
             var realReleasePath;
-            if (pkg.useHash) {
+            if (pkg.hash) {
                 var ext = pkg.release.split('.')[1];
                 realReleasePath = pkg.release.replace('.' + ext, '_' + pkg.hash + '.' + ext);
             } else {
                 realReleasePath = pkg.release;
             }
-            fs.writeFileSync('../' + fis.get('projectName') + realReleasePath, content);
+            fs.writeFileSync(dest + realReleasePath, content);
         }
 
         //判断是否是入口文件
