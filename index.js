@@ -11,7 +11,7 @@ module.exports = function (ret, pack, settings, opt, packCss) {
 	    fis.config.set('projectName', 'yog');
 	}
 
-	var dest = fis.get('options.d') || fis.get('options.dest') || fis.get('projectName')
+	var dest = fis.get('options.d') || fis.get('options.dest') || '../' + fis.get('projectName')
 
     //console.log(opt);
     var path = require('path');
