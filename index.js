@@ -7,7 +7,11 @@ var _ = fis.util;
 var fisPack = module.exports = {};
 module.exports = function (ret, pack, settings, opt, packCss) {
 
-    var dest = opt.dest === 'preview' ? '../yog' : opt.dest;
+	if (!fis.get('projectName')) {
+	    fis.config.set('projectName', 'yog');
+	}
+
+	var dest = fis.get('options.d') || fis.get('options.dest') || fis.get('projectName')
 
     //console.log(opt);
     var path = require('path');
